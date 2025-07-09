@@ -23,6 +23,10 @@ class Jardineiro {
     if (keyIsDown(DOWN_ARROW)) {
       this.y += this.velocidade;
     }
+
+    // Mantém dentro da tela
+    this.x = constrain(this.x, 0, width);
+    this.y = constrain(this.y, 0, height);
   }
 
   mostrar() {
@@ -39,9 +43,9 @@ class Arvore {
 
   mostrar() {
     fill(34, 139, 34);
-    rect(this.x, this.y, 10, 30); // tronco
+    rect(this.x, this.y, 10, 30); // Tronco
     fill(0, 255, 0);
-    ellipse(this.x + 5, this.y, 30, 30); // copa
+    ellipse(this.x + 5, this.y, 30, 30); // Copa
   }
 }
 
@@ -51,8 +55,12 @@ function setup() {
 }
 
 function draw() {
-  let corFundo = lerpColor(color(139, 69, 19), color(205, 133, 63), map(totalArvores, 0, 100, 0, 1));
-background(corFundo);
+  let corFundo = lerpColor(
+    color(139, 69, 19),
+    color(205, 133, 63),
+    map(totalArvores, 0, 100, 0, 1)
+  );
+  background(corFundo);
 
   mostrarInformacoes();
 
@@ -61,7 +69,7 @@ background(corFundo);
   jardineiro.atualizar();
   jardineiro.mostrar();
 
-  plantas.map((arvore) => arvore.mostrar());
+  plantas.forEach((arvore) => arvore.mostrar());
 
   verificarFimDeJogo();
 }
@@ -77,6 +85,7 @@ function mostrarInformacoes() {
   text("Árvores plantadas: " + totalArvores, 460, 390);
   text("Para movimentar o personagem use as setas do teclado.", 10, 60);
   text("Para plantar árvores use P ou espaço.", 10, 80);
+  text("Para reiniciar o jogo pressione R.", 10, 100);
 }
 
 function verificarFimDeJogo() {
@@ -109,4 +118,16 @@ function keyPressed() {
     temperatura -= 3;
     if (temperatura < 0) temperatura = 0;
   }
+
+  if (key === 'r' || key === 'R') {
+    reiniciarJogo();
+  }
+}
+
+function reiniciarJogo() {
+  plantas = [];
+  temperatura = 20;
+  totalArvores = 0;
+  jardineiro = new Jardineiro(width / 2, height - 50);
+  loop(); // Reinicia o draw() se foi parado com noLoop()
 }
